@@ -26,6 +26,8 @@ watchTowerExist = False
 
 # Mineradora
 minerExist = False
+iron = 0
+ironCollect = 0
 
 # Plantacao
 farmExist = False
@@ -177,12 +179,13 @@ def InfoBuilding():
 	global farmExist
 	global minerExist
 	global watchTowerExist
+	global ironCollect
 	
 	while True:
 		os.system('cls')
 		Draw.Head(days, money)
 		#Draw.BuildingsDraw()
-		print("1 - Quartel", "2 - Torre de Vigia", "3 - Fazenda", "", "0 - Voltar", sep = '\n')
+		print("1 - Quartel", "2 - Torre de Vigia", "3 - Fazenda", "4 - Mina", "", "0 - Voltar", sep = '\n')
 		Draw.Lines()
 		x = input("Digite a sua escolha: ").strip()
 		if (x == "0"):
@@ -235,7 +238,26 @@ def InfoBuilding():
 						Wait()
 						break
 					elif (y == "sim"):
-						print("Voce nao possui dinheiro para conseguir construir uma fazenda")
+						print("Voce não possui dinheiro para conseguir construir uma fazenda")
+					elif(y == "nao"):
+						break
+		elif (x == "4"):
+			if minerExist == True:
+				print("Você já possui uma mina. Logo poderá melhorar os equipamentos dos seu exército.")
+				Wait()
+			else:
+				while True:
+					print("Você não possui uma mina", "Gostaria de construir uma? <sim/nao> (Custo 50GP)", sep = '\n')
+					y = input('').lower().strip()
+					if y == 'sim' and money >= 50:
+						print("Você construiu uma mina!!!")
+						minerExist = True
+						money -= 50
+						ironCollect = 2
+						Wait()
+						break
+					elif y == 'sim':
+						print("Voce não possui dinheiro para conseguir construir uma mina")
 					elif(y == "nao"):
 						break
 
@@ -265,14 +287,16 @@ def Quarters():
 	global money
 	global betterArmor
 	global betterWeapon
+	global iron
+	global ironCollect
 
 	while True:
 		os.system('cls')
 		Draw.Head(days, money)
 		Draw.DrawingQuarters(betterWeapon, betterArmor)
 		
-		print("Voce possui", soldiers,"soldados")
-		print("1 - Recrutar Tropas (10 GP)", "2 - Melhorar armaduras (50 GP)(+30% Dano)", "3 - Melhorar armas (40 GP)(+30% Defesa)","","0 - Voltar", sep = '\n')
+		print("Voce possui", soldiers,"soldados e", iron, "ferros")
+		print("1 - Recrutar Tropas (10 GP)", "2 - Melhorar armaduras (5 Ferros)(+30% Defesa)", "3 - Melhorar armas (4 Ferros)(+30% Dano)","","0 - Voltar", sep = '\n')
 		
 		x = input("Digite a sua escolha: ").strip()
 		if (x == "0"):
@@ -286,13 +310,14 @@ def Quarters():
 			Wait()
 			
 		elif (x == "2"):
-			if (money < 50 and betterArmor == False):
-				print("Voce nao possui dinheiro suficiente para essa melhoria.")
+			if (iron < 5 and betterArmor == False):
+				print("Voce não possui material suficiente para essa melhoria.")
 				Wait()
 				
 			elif (betterArmor == False):
 				betterArmor = True
-				money -= 50
+				iron -= 5
+				ironCollect -= 1
 				print("Voce melhorou a qualidade geral das suas armadura.")
 				Wait()
 				
@@ -301,13 +326,14 @@ def Quarters():
 				Wait()
 
 		elif (x == "3"):
-			if (money < 40 and betterWeapon == False):
-				print("Voce nao possui dinheiro suficiente para essa melhoria.")
+			if (iron < 4 and betterWeapon == False):
+				print("Voce não possui material suficiente para essa melhoria.")
 				Wait()
 				
 			elif (betterWeapon == False):
 				betterWeapon = True
-				money -= 40
+				iron -= 4
+				ironCollect -= 1
 				print("Voce melhorou a qualidade geral das suas armas.")
 				Wait()
 				
@@ -358,13 +384,20 @@ def NewDay():
 	global castleDmg
 	global days
 	global farmExist
+	global minerExist
 	global collectIncome
 	global betterFarm
 	global daysIncome
+	global iron
+	global ironCollect
 	
 	days += 1
 	exploreDay = 1
 	waveIncoming -= 1
+
+	# Recurso Mina
+	if minerExist == True and ironCollect > 0:
+		iron += random.randrange(1, ironCollect+1)
 
 	# Lucro Fazenda
 	if (farmExist == True):
@@ -491,5 +524,3 @@ while True:
 			WinScreen()
 	elif (x == "exit"):
 		exit()
-
-
