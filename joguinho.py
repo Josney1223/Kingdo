@@ -44,7 +44,7 @@ betterWeapon = False
 def Wait():
 	k = input("Pressione enter para continuar")
 
-### Definis as aventuras de cada local
+### Definir as aventuras de cada local
 def CreateExplore():
 	global exploreEast
 	global exploreSouth
